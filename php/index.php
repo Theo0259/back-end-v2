@@ -1,7 +1,7 @@
-<?php session_start() ?>
-
-
-
+<?php session_start();
+//Data recovery
+if (isset($_SESSION['table'])) $table = $_SESSION['table'];
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -9,9 +9,6 @@
     <?php
     include './includes/head.inc.html'
     ?>
-
-   
-
 </head>
 
 
@@ -19,7 +16,8 @@
     <?php
     include './includes/header.inc.html'
     ?>
-    <div class="container-fluid">
+
+    <div class="container">
         <div class="row">
 
 
@@ -27,16 +25,14 @@
 
 
 
-                <a href="?page=index.php"><button type="button" class="btn btn-secondary">Home</button></a>
+                <a href="index.php"><button type="button" class="btn btn-light w-100">Home</button></a>
 
 
 
-                <!-- Si add n'est pas défini alours on ajoute le bouton ajouter des données -->
-                <?php if (!isset($_GET['add'])) {
-                    echo '<a href="index.php?add"> <button type="button" class="btn btn-primary btn">Ajouter des données</button></a>';
-                } ?>
 
-                <!-- Si $_SESSION['table'] est défini alors affiche la liste -->
+
+
+                <!-- Si $_SESSION['table'] est défini alors affiche la liste de ul.php -->
                 <?php
                 if (isset($_SESSION['table']))
                     include_once './includes/ul.inc.php';
@@ -49,36 +45,54 @@
 
             <section class="col-md-9 mt-3">
 
-            <!-- Si add est défini alors on ajoute le formulaire -->
+            <form action="./index.php" method="post">
+                
+            
+
+
+                <!-- Si le paramètre GET 'add' est défini alors on ajoute le formulaire form.html -->
                 <?php
                 if (isset($_GET['add'])) {
+                    echo '<h2>Ajouter des données</h2>';
                     include_once './includes/form.inc.html';
+                    echo '<div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary" name="form">Enregistrer les données</button>
+                    </div>';
+                    }
+                elseif (isset($_GET['addmore'])) {
+                    echo '<h2>Ajouter plus de données</h2>';
+                    include_once './includes/form2.inc.php';
+                    echo '<div class="d-flex justify-content-end">
+                    <button type="submit" class="btn btn-primary" name="form">Enregistrer les données</button>
+                    </div>';
+                    }
+                
 
-                    // Si les données sont valider alors on initialise un tableau $table
-                } elseif (isset($_POST['form'])) {
+                    // Si les données sont validées alors on initialise un tableau $table
+                    elseif (isset($_POST['form'])) {
                     $table = [
                         'first_name' => $_POST['first_name'],
                         'name' => $_POST['name'],
                         'age' => $_POST['age'],
                         'size' => $_POST['size'],
                         'gender' => $_POST['gender'],
-
                     ];
+
+                    // Les données du formulaire sont validées. Si 'age' ou 'size' ne sont pas des nombres, un message d'erreur est affiché et la session est détruite. Sinon, les données sont sauvegardées dans la variable de session 'table' et un message de succès est affiché.
                     if (!is_numeric($_POST['age'])) {
                         echo "<h2>L'age doit être un nombre</h2>";
                         session_destroy();
                     } elseif (!is_numeric($_POST['size'])) {
                         echo "<h2>la taille doit être un nombre</h2>";
                         session_destroy();
-
-                        // Si les vérifications sont bonnes on stock les données dans la session ['table] et on affiche un message
                     } else {
                         $_SESSION['table'] = $table;
                         echo '<div class="alert alert-dismissible alert-success">
                         <strong class="d-flex justify-content-center">Données sauvegardées</strong>
                         </div>';
                     }
-                } 
+                } elseif (isset($table)) {
+
 
                     if (isset($_GET['debugging'])) {
                         echo '<h2> Débogage </h2>';
@@ -143,12 +157,21 @@
                     </div>
                     ';
                 ?>
-                    <!-- Refresh la page au bout de 1.3 secondes et retourne à la racine -->
-                    <meta http-equiv="refresh" content="1.3; URL=/index.php">
+                        <!-- Refresh la page au bout de 1.3 secondes et retourne à la racine -->
+                        <!-- <meta http-equiv="refresh" content="1.3; URL=/index.php"> -->
 
+
+                        <!-- Si add n'est pas défini alors on ajoute le bouton ajouter des données -->
+                        </form>
                 <?php
-                    }
+                    } 
+                } else {
+                    echo '<a href="index.php?add"> <button type="button" class="btn btn-primary btn">Ajouter des données</button></a>';
+                    echo '<a href="index.php?addmore"> <button type="button" class="btn btn-secondary btn">Ajouter plus de données</button></a>';
+                }
                 ?>
+
+
 
             </section>
         </div>
