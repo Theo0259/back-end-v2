@@ -1,0 +1,45 @@
+<form action="../index.php" method="post">
+    <fieldset>
+      <legend>Ajouter des données</legend>
+      <div class="form-group">
+        <label for="prenom" class="form-label mt-4"></label>
+        <input type="text" name="first_name" class="form-control" id="firstName" placeholder="Prénom" required>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputEmail1" class="form-label mt-4"></label>
+        <input type="text" name="name" class="form-control" id="name_user"  placeholder="Nom" required>
+      </div>
+      <div class="form-group">
+        <label for="age" class="form-label mt-4">Age (18 a 70 ans)</label>
+        <input type="number" name="age" class="form-control" id="age_user" placeholder="Renseignez votre âge" min="18" max="70" required>
+      </div>
+    <div class="form-group">
+        <label for="taille" class="form-label mt-4"></label>
+        <div class="form-group">
+          <div class="input-group mb-3">
+            <span class="input-group-text">Taille (1,26m à 3m)</span>
+            <input type="number" step="0.01" name="size" class="form-control" min="1.26" max="3" placeholder="Renseignez votre taille"
+            pattern="['/^[0-9]+([.,][0-9]+)?$/']" required>
+            <span class="input-group-text">m</span>
+          </div>
+        </div>
+    <div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="gender" id="optionsRadios1" value="Homme" required>
+          <label class="form-check-label" for="optionsRadios1">
+            Homme
+          </label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="gender" id="optionsRadios2" value="Femme" required>
+          <label class="form-check-label" for="optionsRadios2">
+            Femme
+          </label>
+        </div>
+    </div>
+     <div class="d-flex justify-content-end">
+      <button type="submit" class="btn btn-primary" name="form">Enregistrer les données</button>
+    </div>
+    </fieldset>
+  </form>
+  
