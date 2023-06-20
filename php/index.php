@@ -45,7 +45,7 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
 
             <section class="col-md-9 mt-3">
 
-            <form action="./index.php" method="post">
+            
                 
             
 
@@ -54,22 +54,26 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
                 <?php
                 if (isset($_GET['add'])) {
                     echo '<h2>Ajouter des données</h2>';
+                    echo '<form action="./index.php" method="post">';
                     include_once './includes/form.inc.html';
                     echo '<div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary" name="form">Enregistrer les données</button>
                     </div>';
+                    echo '<form>';
                     }
                 elseif (isset($_GET['addmore'])) {
                     echo '<h2>Ajouter plus de données</h2>';
+                    echo '<form action="./index.php" method="post">';
                     include_once './includes/form2.inc.php';
                     echo '<div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary" name="form">Enregistrer les données</button>
                     </div>';
-                    }
+                    echo '<form>';
+                }
                 
 
-                    // Si les données sont validées alors on initialise un tableau $table
-                    elseif (isset($_POST['form'])) {
+                // Si les données sont validées alors on initialise un tableau $table
+                elseif (isset($_POST['form'])) {
                     $table = [
                         'first_name' => $_POST['first_name'],
                         'name' => $_POST['name'],
