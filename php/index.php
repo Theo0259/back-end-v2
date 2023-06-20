@@ -55,26 +55,27 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
                 if (isset($_GET['add'])) {
                     
                     echo '<h2>Ajouter des données</h2>';
-                    echo '<form action="./index.php" method="post">';
+                    echo '<form action="./index.php" method="post" enctype="multipart/form-data">';
                     include_once './includes/form.inc.html';
                     echo '<div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary" name="form">Enregistrer les données</button>
                     </div>';
-                    echo '<form>';
+                    echo '</form>';
                     }
                 elseif (isset($_GET['addmore'])) {
                     echo '<h2>Ajouter plus de données</h2>';
-                    echo '<form action="./index.php" method="post">';
+                    echo '<form action="./index.php" method="post" enctype="multipart/form-data">';
                     include_once './includes/form2.inc.php';
                     echo '<div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary" name="form">Enregistrer les données</button>
                     </div>';
-                    echo '<form>';
+                    echo '</form>';
                 }
                 
 
                 // Si les données sont validées alors on initialise un tableau $table
-                elseif (isset($_POST['form'])) {
+                elseif (isset($_POST['form']) || (isset($_POST['form2']))) {
+                    $table = [];
                     $table = [
                         'first_name' => $_POST['first_name'],
                         'name' => $_POST['name'],
@@ -83,6 +84,82 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
                         'gender' => $_POST['gender'],
                     ];
 
+                    if (isset($_POST['HTML'])) {
+                        $table['HTML'] =  $_POST['HTML'];
+                    }
+                    if (isset($_POST['CSS'])) {
+                        $table['CSS'] =  $_POST['CSS'];
+                    }
+                    if (isset($_POST['JS'])) {
+                        $table['JS'] =  $_POST['JS'];
+                    }
+                    if (isset($_POST['PHP'])) {
+                        $table['PHP'] =  $_POST['PHP'];
+                    }
+                    if (isset($_POST['MySQL'])) {
+                        $table['MySQL'] =  $_POST['MySQL'];
+                    }
+                    if (isset($_POST['Bootstrap'])) {
+                        $table['Bootstrap'] =  $_POST['Bootstrap'];
+                    }
+                    if (isset($_POST['Symphony'])) {
+                        $table['Symphony'] =  $_POST['Symphony'];
+                    }
+                    if (isset($_POST['React'])) {
+                        $table['React'] =  $_POST['React'];
+                    }
+                        if (isset($_POST['color'])) {
+                        $table['color'] = $_POST['color'];
+                    }
+
+                    if (isset($_POST['date'])) {
+                        $table['date'] = $_POST['date'];
+                    }
+
+                    if(isset($_FILES['file'])){
+                        
+
+
+                    $name = $_FILES['file']['name'];
+                    $type = $_FILES['file']['type'];
+                    $tmpName = $_FILES['file']['tmp_name'];   
+                    $size = $_FILES['file']['size'];
+                    $error = $_FILES['file']['error'];
+                    
+                    $maxSize = '2000000';
+                    $allowedExtensions = ['', ''];
+                
+
+                    if (isset($_FILES) && $error == 0 && $size <= $maxSize)  {
+                    
+                        $allowedExtensions = ['jpg', 'png'];
+                        move_uploaded_file($tmpName, './uploaded/'.$name);
+                    }  
+                    else {
+                        if ($error == 4) 
+                        $message = 'Auncun fichié n\a été téléchargé';
+                        else $message = 'error : '.$message. $error;
+                        echo '<div class="alert alert-danger text-center" role="alert">'.$message.'</div>';
+                        }
+
+                        $table['img'] = array(
+                            'tmp_name' => $tmpName,
+                            'type' => $type,
+                            'name' => $name,
+                            'size' => $size,
+                            'error' => $error
+                        
+                        );
+
+                    } 
+                    
+                   
+                
+                
+                    
+                
+
+                
                     // Les données du formulaire sont validées. Si 'age' ou 'size' ne sont pas des nombres, un message d'erreur est affiché et la session est détruite. Sinon, les données sont sauvegardées dans la variable de session 'table' et un message de succès est affiché.
                     if (!is_numeric($_POST['age'])) {
                         echo "<h2>L'age doit être un nombre</h2>";
@@ -96,7 +173,9 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
                         <strong class="d-flex justify-content-center">Données sauvegardées</strong>
                         </div>';
                     }
-                } elseif (isset($table)) {
+                }
+
+                elseif (isset($table)) {
 
 
                     if (isset($_GET['debugging'])) {
@@ -140,17 +219,28 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
                         echo "<h2> ===> Lecture du tableau à l'aide d'une boucle foreach</h2>
                     <br> <br>";
                         $n = 0;
-                        foreach ($_SESSION['table'] as $key => $value) {
-                            echo "à la ligne n°" . $n++ . " correspond la clé " . $key . " et contient " . $value . "<br>";
-                        }
-                    } elseif (isset($_GET['function'])) {
+                            foreach ($_SESSION['table'] as $key => $value) {
+                                if ($key != 'img'){
+                                echo "à la ligne n°" . $n++ . " correspond la clé " . $key . " et contient : " . $value . "<br>";
+                                }else{
+                                echo "à la ligne n°" . $n++ . " correspond la clé " . $key . " et contient : <br>";
+                                echo '<img class="mw-100" src="uploaded/'.$value['name'].'">';
+                                };
+                            } } elseif (isset($_GET['function'])) {
                         echo "<h2> ===> J'utilise ma function Readtable()</h2>
                     <br> <br>";
                         function readTable()
                         {
+                        
                             $n = 0;
                             foreach ($_SESSION['table'] as $key => $value) {
-                                echo "à la ligne n°" . $n++ . " correspond la clé " . $key . " et contient " . $value . "<br>";
+                                if ($key != 'img'){
+                                echo "à la ligne n°" . $n++ . " correspond la clé " . $key . " et contient : " . $value . "<br>";
+                                }else{
+                                echo "à la ligne n°" . $n++ . " correspond la clé " . $key . " et contient : <br>";
+                                echo '<img class="mw-100" src="uploaded/'.$value['name'].'">';
+                                }
+                            
                             }
                         }
                         readTable();
