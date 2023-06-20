@@ -1,4 +1,4 @@
-<div class="container">
+
     <div class="row">
         <div class="card col-md-7 mx-auto my-l">
             <?php
@@ -56,7 +56,7 @@
                     React
                 </label>
             </div>
-            <div class="form-row">
+            <div class="form-check">
                 <label for="exampleColorInput" class="form-label">Couleur préférée</label>
                 <input type="color" class="form-control form-control-color" id="exampleColorInput" value="#0000" title="Choose your color">
             </div>
@@ -70,6 +70,6 @@
             <input class="form-control" type="file" id="formFile">
         </div>
     </div>
-</div>
+
 
   

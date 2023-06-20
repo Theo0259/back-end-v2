@@ -45,26 +45,28 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
 
             <section class="col-md-9 mt-3">
 
-            <form action="./index.php" method="post">
-                
+            
             
 
 
                 <!-- Si le paramètre GET 'add' est défini alors on ajoute le formulaire form.html -->
                 <?php
                 if (isset($_GET['add'])) {
+                    
                     echo '<h2>Ajouter des données</h2>';
+                    echo  '<form action="./index.php" method="post">';
                     include_once './includes/form.inc.html';
                     echo '<div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary" name="form">Enregistrer les données</button>
-                    </div>';
+                    </div></form>';
                     }
                 elseif (isset($_GET['addmore'])) {
                     echo '<h2>Ajouter plus de données</h2>';
+                    echo  '<form action="./index.php" method="post">';
                     include_once './includes/form2.inc.php';
                     echo '<div class="d-flex justify-content-end">
                     <button type="submit" class="btn btn-primary" name="form">Enregistrer les données</button>
-                    </div>';
+                    </div></form>';
                     }
                 
 
@@ -157,12 +159,11 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
                     </div>
                     ';
                 ?>
-                        <!-- Refresh la page au bout de 1.3 secondes et retourne à la racine -->
-                        <!-- <meta http-equiv="refresh" content="1.3; URL=/index.php"> -->
+                        
 
 
                         <!-- Si add n'est pas défini alors on ajoute le bouton ajouter des données -->
-                        </form>
+                      
                 <?php
                     } 
                 } else {
