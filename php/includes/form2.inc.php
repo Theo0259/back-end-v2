@@ -55,7 +55,7 @@
                 React
             </label>
         </div>
-        <div class="form-check">
+        <div class="form-group">
             <label for="exampleColorInput" class="form-label">Couleur préférée</label>
             <input type="color" class="form-control form-control-color" id="exampleColorInput" value="#0000" title="Choose your color" name="color">
         </div>

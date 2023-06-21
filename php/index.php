@@ -1,6 +1,6 @@
-<?php session_start();
-//Data recovery
-if (isset($_SESSION['table'])) $table = $_SESSION['table'];
+<?php session_start(); // Démarre une session ou restaure la session existante
+// Récupération des données
+if (isset($_SESSION['table'])) $table = $_SESSION['table']; // Récupère les données de la variable de session 'table' et les stocke dans la variable $table
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -11,7 +11,6 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
     ?>
 </head>
 
-
 <body>
     <?php
     include './includes/header.inc.html'
@@ -20,17 +19,9 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
     <div class="container">
         <div class="row">
 
-
             <nav class="col-md-3 mt-3">
 
-
-
                 <a href="index.php"><button type="button" class="btn btn-light w-100">Home</button></a>
-
-
-
-
-
 
                 <!-- Si $_SESSION['table'] est défini alors affiche la liste de ul.php -->
                 <?php
@@ -41,41 +32,39 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
 
             </nav>
 
-
-
             <section class="col-md-9 mt-3">
 
-            
-                
-            
-
-
-                <!-- Si le paramètre GET 'add' est défini alors on ajoute le formulaire form.html -->
+                <!-- Si les paramètres GET 'add' et 'addmore' sont  définis alors on ajoute le formulaire form.html -->
                 <?php
-                if (isset($_GET['add'])) {
-                    
-                    echo '<h2>Ajouter des données</h2>';
-                    echo '<form action="./index.php" method="post" enctype="multipart/form-data">';
-                    include_once './includes/form.inc.html';
-                    echo '<div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary" name="form">Enregistrer les données</button>
-                    </div>';
-                    echo '</form>';
-                    }
-                elseif (isset($_GET['addmore'])) {
-                    echo '<h2>Ajouter plus de données</h2>';
-                    echo '<form action="./index.php" method="post" enctype="multipart/form-data">';
-                    include_once './includes/form2.inc.php';
-                    echo '<div class="d-flex justify-content-end">
-                    <button type="submit" class="btn btn-primary" name="form">Enregistrer les données</button>
-                    </div>';
-                    echo '</form>';
-                }
-                
 
+                // Si le paramètre 'add' existe dans l'URL
+                if (isset($_GET['add'])) {
+                    $pageTitle = 'Ajouter des données';
+                    $formFile = './includes/form.inc.html';
+
+                // Sinon, si le paramètre 'addmore' existe dans l'URL
+                } elseif (isset($_GET['addmore'])) {
+                    $pageTitle = 'Ajouter plus de données';
+                    $formFile = './includes/form2.inc.php';
+                }
+
+                if (isset($pageTitle) && isset($formFile)) {
+                // Si les variables $pageTitle et $formFile sont définies
+                    ?>
+                    <h2><?php echo $pageTitle; ?></h2>
+                    <form action="./index.php" method="post" enctype="multipart/form-data">
+                        <?php include_once $formFile; ?>
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary" name="form">Enregistrer les données</button>
+                        </div>
+                    </form>
+                    <?php
+                    }
+                
                 // Si les données sont validées alors on initialise un tableau $table
                 elseif (isset($_POST['form']) || (isset($_POST['form2']))) {
-                    $table = [];
+
+                // Création d'un tableau avec les données à sauvegarder
                     $table = [
                         'first_name' => $_POST['first_name'],
                         'name' => $_POST['name'],
@@ -83,7 +72,7 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
                         'size' => $_POST['size'],
                         'gender' => $_POST['gender'],
                     ];
-
+                // Vérification et ajout des langages sélectionnés
                     if (isset($_POST['HTML'])) {
                         $table['HTML'] =  $_POST['HTML'];
                     }
@@ -108,40 +97,41 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
                     if (isset($_POST['React'])) {
                         $table['React'] =  $_POST['React'];
                     }
+                    // Vérification et ajout de la couleur sélectionnée
                         if (isset($_POST['color'])) {
                         $table['color'] = $_POST['color'];
                     }
-
+                    // Vérification et ajout de la date sélectionnée
                     if (isset($_POST['date'])) {
                         $table['date'] = $_POST['date'];
                     }
 
+                    // Traitement du fichier téléchargé (s'il existe)
                     if(isset($_FILES['file'])){
-                        
-
-
-                    $name = $_FILES['file']['name'];
-                    $type = $_FILES['file']['type'];
-                    $tmpName = $_FILES['file']['tmp_name'];   
-                    $size = $_FILES['file']['size'];
-                    $error = $_FILES['file']['error'];
-                    
-                    $maxSize = '2000000';
-                    $allowedExtensions = ['', ''];
+                    // Récupération des informations sur le fichier téléchargé
+                    $name = $_FILES['file']['name']; // Nom original du fichier
+                    $type = $_FILES['file']['type']; // Type MIME du fichier
+                    $tmpName = $_FILES['file']['tmp_name']; // Chemin temporaire du fichier  
+                    $size = $_FILES['file']['size']; // Taille du fichier en octets
+                    $error = $_FILES['file']['error']; // Code d'erreur associé au téléchargement    
+                    $maxSize = '2000000'; // Taille maximale autorisée pour le fichier (en octets)
+                    $allowedExtensions = ['', '']; // Extensions de fichiers autorisées
                 
-
+                    // Vérifie si le tableau $_FILES est défini, s'il n'y a pas d'erreur et que la taille du fichier est inférieure ou égale à la limite maximale autorisée
                     if (isset($_FILES) && $error == 0 && $size <= $maxSize)  {
-                    
+                    // Vérification des extensions autorisées et déplacement du fichier vers le répertoire 'uploaded'
                         $allowedExtensions = ['jpg', 'png'];
                         move_uploaded_file($tmpName, './uploaded/'.$name);
                     }  
                     else {
+                        // Gestion des erreurs lors du téléchargement du fichier
                         if ($error == 4) 
                         $message = 'Auncun fichié n\a été téléchargé';
                         else $message = 'error : '.$message. $error;
                         echo '<div class="alert alert-danger text-center" role="alert">'.$message.'</div>';
                         }
 
+                    // Ajout des informations du fichier dans le tableau
                         $table['img'] = array(
                             'tmp_name' => $tmpName,
                             'type' => $type,
@@ -150,23 +140,17 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
                             'error' => $error
                         
                         );
-
-                    } 
-                    
-                   
-                
-                
-                    
-                
-
-                
+                    }     
                     // Les données du formulaire sont validées. Si 'age' ou 'size' ne sont pas des nombres, un message d'erreur est affiché et la session est détruite. Sinon, les données sont sauvegardées dans la variable de session 'table' et un message de succès est affiché.
+                    // Vérifie si la valeur de 'age' n'est pas un nombre
                     if (!is_numeric($_POST['age'])) {
                         echo "<h2>L'age doit être un nombre</h2>";
                         session_destroy();
+                    // Vérifie si la valeur de 'size' n'est pas un nombre
                     } elseif (!is_numeric($_POST['size'])) {
                         echo "<h2>la taille doit être un nombre</h2>";
                         session_destroy();
+                    // Les données sont valides, elles sont sauvegardées dans la variable de session 'table' et un message de succès est affiché
                     } else {
                         $_SESSION['table'] = $table;
                         echo '<div class="alert alert-dismissible alert-success">
@@ -174,68 +158,78 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
                         </div>';
                     }
                 }
-
+                // Vérifie si la variable $table est définie (données préalablement sauvegardées)
                 elseif (isset($table)) {
 
-
+                    // Vérifie si le paramètre 'debugging' est présent dans l'URL
                     if (isset($_GET['debugging'])) {
-                        echo '<h2> Débogage </h2>';
-                        echo '<pre>';
-                        print_r($_SESSION['table']);
-                        echo '<pre>';
+                        echo '<h2> Débogage </h2>';// Affiche un titre "Débogage"
+                        echo '<pre>'; // Balise HTML pour afficher du texte préformaté
+                        print_r($_SESSION['table']); // Affiche le contenu de la variable de session 'table'
+                        echo '<pre>'; // Fermeture de la balise HTML
+                    
+                    // Vérifie si le paramètre 'concatenation' est présent dans l'URL
                     } elseif (isset($_GET['concatenation'])) {
-
+                        // Récupère les valeurs individuelles de la variable de session 'table'
                         $first_name = $_SESSION['table']['first_name'];
                         $name = $_SESSION['table']['name'];
                         $age = $_SESSION['table']['age'];
                         $size = $_SESSION['table']['size'];
 
-                        $tab = $_SESSION['table'];
+                        $tab = $_SESSION['table']; // Copie la variable de session 'table' dans une nouvelle variable $tab
                         function genre($tab)
                         {
+                            // Vérifie si le genre dans le tableau est "Homme"
                             if ($tab['gender'] === "Homme") {
-                                echo "Mr";
+                                echo "Mr"; // Affiche "Mr" si le genre est "Homme"
                             } else {
-                                echo "Mme";
+                                echo "Mme"; // Affiche "Mme" si le genre n'est pas "Homme"
                             }
                         }
                         echo "<h1 class='d-flex justify-content-center' >Concaténation</h1> <br>
                             <h3> ===> Construction d'une phrase avec le contenu du tableau</h3>";
 
-                        echo genre($tab) .  " " . $first_name . " " .  $name;
-                        echo " <br> j'ai " . $age . " ans et je mesure "  . $size . " m. <br> <br>";
+                        echo genre($tab) .  " " . $first_name . " " .  $name; // Affiche le genre suivi du prénom et du nom
+                        echo " <br> j'ai " . $age . " ans et je mesure "  . $size . " m. <br> <br>"; // Affiche l'âge et la taille
 
                         echo "<h3> ===> Construction d'une phrase après MAJ du tableau</h3>";
-                        $name_maj = strtoupper($name);
-                        echo genre($tab) .  " " . $first_name . " " . $name_maj . "<br>";
-                        echo "j'ai " . $age . " ans et je mesure "  . $size . " m. <br> <br>";
+                        $name_maj = strtoupper($name); // Convertit le nom en majuscules
+                        echo genre($tab) .  " " . $first_name . " " . $name_maj . "<br>";  // Affiche le genre, le prénom et le nom en majuscules
+                        echo "j'ai " . $age . " ans et je mesure "  . $size . " m. <br> <br>"; // Affiche l'âge et la taille
 
                         echo "<h3> ===> Affichage d'une virgule à la place du point pour la taille</h3>";
 
-                        $size_maj = str_replace(".", ",", $size);
+                        $size_maj = str_replace(".", ",", $size); // Remplace les points par des virgules dans la taille
                         echo genre($tab) . " " . $first_name . " " . $name_maj . "<br>
-                        j'ai " . $age . " ans et je mesure " . $size_maj . "m.";
+                        j'ai " . $age . " ans et je mesure " . $size_maj . "m."; // Affiche le genre, le prénom, le nom en majuscules et la taille avec des virgules
                     } elseif (isset($_GET['loop'])) {
                         echo "<h2> ===> Lecture du tableau à l'aide d'une boucle foreach</h2>
                     <br> <br>";
-                        $n = 0;
+                        $n = 0; // Initialise une variable pour compter le numéro de ligne    
+                            // Parcours du tableau '$_SESSION['table']' avec une boucle foreach
                             foreach ($_SESSION['table'] as $key => $value) {
+                                // Si la clé n'est pas 'img', affiche le numéro de ligne, la clé et la valeur correspondante
                                 if ($key != 'img'){
                                 echo "à la ligne n°" . $n++ . " correspond la clé " . $key . " et contient : " . $value . "<br>";
+                                // Si la clé est 'img', affiche le numéro de ligne, la clé et affiche une image en utilisant la valeur correspondante comme nom de fichier
                                 }else{
                                 echo "à la ligne n°" . $n++ . " correspond la clé " . $key . " et contient : <br>";
-                                echo '<img class="mw-100" src="uploaded/'.$value['name'].'">';
+                                echo '<img class="mw-100" src="uploaded/'.$value['name'].'">'; // Affiche une balise HTML pour l'image en utilisant le nom de fichier
                                 };
                             } } elseif (isset($_GET['function'])) {
                         echo "<h2> ===> J'utilise ma function Readtable()</h2>
                     <br> <br>";
+                    // Définition de la fonction ReadTable()
                         function readTable()
                         {
                         
-                            $n = 0;
-                            foreach ($_SESSION['table'] as $key => $value) {
+                            $n = 0; // Initialise une variable pour compter le numéro de ligne
+                            // Parcours du tableau '$_SESSION['table']' avec une boucle foreach
+                            foreach ($_SESSION['table'] as $key => $value) { 
+                                // Si la clé n'est pas 'img', affiche le numéro de ligne, la clé et la valeur correspondante
                                 if ($key != 'img'){
                                 echo "à la ligne n°" . $n++ . " correspond la clé " . $key . " et contient : " . $value . "<br>";
+                                // Si la clé est 'img', affiche le numéro de ligne, la clé et affiche une image en utilisant la valeur correspondante comme nom de fichier
                                 }else{
                                 echo "à la ligne n°" . $n++ . " correspond la clé " . $key . " et contient : <br>";
                                 echo '<img class="mw-100" src="uploaded/'.$value['name'].'">';
@@ -243,9 +237,10 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
                             
                             }
                         }
-                        readTable();
+                        readTable(); // Appel de la fonction ReadTable() pour lire et afficher le contenu du tableau
+                        
                     } elseif (isset($_GET['del'])) {
-                        session_destroy();
+                        session_destroy(); // Détruit toutes les données de la session actuelle
                         echo '
                     <div class="alert alert-dismissible alert-info">
                         <strong class="d-flex justify-content-center">Données supprimées</strong>
@@ -253,20 +248,14 @@ if (isset($_SESSION['table'])) $table = $_SESSION['table'];
                     ';
                 ?>
                         
-
-
-                        <!-- Si add n'est pas défini alors on ajoute le bouton ajouter des données -->
-                      
+                        <!-- Si la variable $table n'est pas définie ou vide, affiche les boutons pour ajouter des données -->
                 <?php
                     } 
                 } else {
-                    echo '<a href="index.php?add"> <button type="button" class="btn btn-primary btn">Ajouter des données</button></a>';
-                    echo '<a href="index.php?addmore"> <button type="button" class="btn btn-secondary btn">Ajouter plus de données</button></a>';
+                    echo '<a href="index.php?add"> <button type="button" class="btn btn-primary">Ajouter des données</button></a>';
+                    echo '<a href="index.php?addmore"> <button type="button" class="btn btn-secondary">Ajouter plus de données</button></a>';
                 }
                 ?>
-
-
-
             </section>
         </div>
     </div>
